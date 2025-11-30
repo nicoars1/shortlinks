@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect, render_template, jsonify
 from models import db, Links
-from utils import generateCode
+from utils import generateCode, check_url_safety
 import validators
 
 bp = Blueprint("main", __name__)
@@ -15,15 +15,17 @@ def shortenURL():
     original = data.get("url")
     user_id = data.get("user_id", "default")
 
+    if not check_url_safety(original):
+        return jsonify({"error": "suspicious URL"}), 400
     if not original:
         return jsonify({"error": "URL required"}), 400
     if not validators.url(original):
         return jsonify({"error": "URL invalid"}), 400
 
-    # Verificar límite de 5 links por usuario
+    # Verify limit of 5 links per user
     user_links_count = Links.query.filter_by(user_id=user_id).count()
     if user_links_count >= 5:
-        return jsonify({"error": "Has alcanzado el límite de 5 links cortos. Elimina uno para crear otro."}), 403
+        return jsonify({"error": "You have reached the limit of 5 short links. Delete one to create another."}), 403
 
     short = generateCode()
 

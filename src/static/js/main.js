@@ -5,7 +5,7 @@ function saveToLocalStorage() {
 let linksData = [];
 const MAX_LINKS = 5;
 
-// Generar un ID único para cada usuario/navegador
+// Generate a unique ID for each user/browser
 let userId = localStorage.getItem("userId");
 if (!userId) {
     userId = "user_" + Math.random().toString(36).substr(2, 9);
@@ -101,9 +101,9 @@ form.addEventListener("submit", async (e) => {
 
     if (!url) return alert("Enter a URL");
 
-    // Validar límite de 5 links
+    // Validate limit of 5 links
     if (linksData.length >= MAX_LINKS) {
-        return alert(`Has alcanzado el límite de ${MAX_LINKS} links cortos. Elimina uno para crear otro.`);
+        return alert(`You have reached the limit of ${MAX_LINKS} short links. Delete one to create another.`);
     }
 
     try {
