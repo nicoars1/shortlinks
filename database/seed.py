@@ -1,7 +1,7 @@
 import sqlite3 as sql
 
 
-DB_PATH = "C:/Users/nicol/Desktop/shortUrl/database/links.db"
+DB_PATH = "C:/Users/nicol/Desktop/shortUrl/database/"
 
 
 def createDB():
@@ -12,7 +12,8 @@ def createDB():
                    original_url text,
                    short_code text,
                    created_at integer,
-                   clicks integer
+                   clicks integer,
+                   user_id text
                    )""")
     conn.commit()
     conn.close()

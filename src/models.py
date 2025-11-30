@@ -1,12 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-import time
-
+from datetime import datetime
 
 db = SQLAlchemy()
-
-
-from datetime import datetime
-import time
 
 class Links(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,6 +9,7 @@ class Links(db.Model):
     short_code = db.Column(db.String(20), unique=True, nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     clicks = db.Column(db.Integer, default=0)
+    user_id = db.Column(db.String(50), nullable=False, default="default", index=True)
 
     def __str__(self):
         return f"Original Link: {self.original_url}. Short Code: {self.short_code}. Created At: {self.created_at}. Clicks: {self.clicks}."

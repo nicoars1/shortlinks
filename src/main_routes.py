@@ -13,15 +13,21 @@ def home():
 def shortenURL():
     data = request.json
     original = data.get("url")
+    user_id = data.get("user_id", "default")
 
     if not original:
         return jsonify({"error": "URL required"}), 400
     if not validators.url(original):
         return jsonify({"error": "URL invalid"}), 400
 
+    # Verificar límite de 5 links por usuario
+    user_links_count = Links.query.filter_by(user_id=user_id).count()
+    if user_links_count >= 5:
+        return jsonify({"error": "Has alcanzado el límite de 5 links cortos. Elimina uno para crear otro."}), 403
+
     short = generateCode()
 
-    link = Links(original_url=original, short_code=short)
+    link = Links(original_url=original, short_code=short, user_id=user_id)
     db.session.add(link)
     db.session.commit()
 
@@ -54,7 +60,8 @@ def total_clicks():
 
 @bp.route("/stats/links")
 def stats_links():
-    links = Links.query.order_by(Links.id.desc()).limit(50).all()
+    user_id = request.args.get("user_id", "default")
+    links = Links.query.filter_by(user_id=user_id).order_by(Links.id.desc()).all()
 
     data = []
     for link in links:

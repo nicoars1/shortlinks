@@ -3,21 +3,34 @@ function saveToLocalStorage() {
 }
 
 let linksData = [];
+const MAX_LINKS = 5;
+
+// Generar un ID único para cada usuario/navegador
+let userId = localStorage.getItem("userId");
+if (!userId) {
+    userId = "user_" + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem("userId", userId);
+}
 
 const form = document.getElementById("shortenForm");
 const input = document.getElementById("originalUrl");
 const tableBody = document.getElementById("linksTableBody");
 const totalLinksDisplay = document.getElementById("totalLinksDisplay");
 const totalClicksDisplay = document.getElementById("totalClicksDisplay");
+const submitBtn = document.getElementById("submitBtn");
+
+
 
 function renderTable() {
     tableBody.innerHTML = "";
 
     if (linksData.length === 0) {
         document.getElementById("emptyState").classList.remove("hidden");
-        totalLinksDisplay.textContent = "0/50";
+        totalLinksDisplay.textContent = "0/5";
         return;
     }
+        
+    
 
     document.getElementById("emptyState").classList.add("hidden");
 
@@ -78,7 +91,7 @@ function renderTable() {
         tableBody.appendChild(row);
     });
 
-    totalLinksDisplay.textContent = `${linksData.length}/50`;
+    totalLinksDisplay.textContent = `${linksData.length}/5`;
 }
 
 // --- Form Submit ---
@@ -88,11 +101,16 @@ form.addEventListener("submit", async (e) => {
 
     if (!url) return alert("Enter a URL");
 
+    // Validar límite de 5 links
+    if (linksData.length >= MAX_LINKS) {
+        return alert(`Has alcanzado el límite de ${MAX_LINKS} links cortos. Elimina uno para crear otro.`);
+    }
+
     try {
         const response = await fetch("/shorten", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url })
+            body: JSON.stringify({ url, user_id: userId })
         });
 
         const data = await response.json();
@@ -108,6 +126,7 @@ form.addEventListener("submit", async (e) => {
         saveToLocalStorage();
         renderTable();
         loadStats();
+        input.value = "";
     } catch (err) {
         console.error("Error:", err);
         alert("Unexpected error.");
@@ -121,7 +140,7 @@ async function loadStats() {
 }
 
 async function loadLinks() {
-    const res = await fetch("/stats/links");
+    const res = await fetch(`/stats/links?user_id=${userId}`);
     const data = await res.json();
 
     linksData = data;
