@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkSwift - Acortador de URLs Profesional</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind Configuration and Custom Styles -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6', // Teal
+                            600: '#0d9488',
+                            900: '#134e4a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                        <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white">
+                            <i class="fa-solid fa-link"></i>
+                        </div>
+                        <span class="font-bold text-xl tracking-tight text-slate-900">ShortLink</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <!--
+                    <a href="#" class="text-slate-500 hover:text-brand-600 px-3 py-2 text-sm font-medium transition">Stats</a>
+                    <a href="#" class="text-slate-500 hover:text-brand-600 px-3 py-2 text-sm font-medium transition">API</a>
+                    <button class="text-slate-500 hover:text-slate-900 px-3 py-2 text-sm font-medium">Log In</button>
+                    <button class="bg-brand-600 hover:bg-brand-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg shadow-brand-500/30">
+                        Sign up
+                    </button>
+                    -->
+                </div>
+                <!-- Mobile menu button placeholder -->
+                <div class="flex items-center md:hidden">
+                    <button class="text-slate-500 hover:text-slate-700">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        
+        <!-- Hero Section with Input -->
+        <section class="relative bg-white pt-16 pb-20 lg:pt-24 lg:pb-28 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 fade-in-up" style="animation-delay: 0.1s;">
+                    Shorten your links, <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 to-blue-600">expand your reach.</span>
+                </h1>
+                <p class="mt-4 max-w-2xl mx-auto text-xl text-slate-500 mb-10 fade-in-up" style="animation-delay: 0.2s;">
+                    A powerful tool for marketers. Track clicks, analyze data, and manage your links intelligently.
+                </p>
+
+                <!-- Main Input Box -->
+                <div class="max-w-3xl mx-auto bg-white p-2 rounded-2xl shadow-2xl shadow-brand-900/10 border border-slate-100 fade-in-up" style="animation-delay: 0.3s;">
+                    <form id="shortenForm" class="flex flex-col md:flex-row gap-2">
+                        <div class="relative flex-grow">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fa-solid fa-link text-slate-400"></i>
+                            </div>
+                            <input type="url" id="originalUrl" required
+                                placeholder="Paste your link here (ej: https://link.com/...)" 
+                                class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-slate-900 placeholder-slate-400 transition"
+                            >
+                        </div>
+                        <button type="submit" id="submitBtn" class="bg-brand-600 hover:bg-brand-900 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-brand-500/20 flex items-center justify-center gap-2 whitespace-nowrap">
+                            <span>Shorten URL</span>
+                            <i class="fa-solid fa-magic"></i>
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Hidden error/success message -->
+                <div id="statusMessage" class="mt-4 h-6 text-sm font-medium transition-opacity opacity-0"></div>
+            </div>
+            
+            <!-- Decorative background elements -->
+            <div class="absolute top-0 left-1/2 w-full -translate-x-1/2 h-full z-0 pointer-events-none">
+                <div class="absolute top-20 left-10 w-72 h-72 bg-brand-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+                <div class="absolute top-20 right-10 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+            </div>
+        </section>
+
+        <!-- Statistics and List Section  -->
+        <section class="bg-slate-50 py-12 border-t border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 fade-in-up" style="animation-delay: 0.4s;">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-500 font-medium">Total Clicks</p>
+                            <p class="text-2xl font-bold text-slate-900" id="totalClicksDisplay">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-link"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-500 font-medium">Created Links</p>
+                            <p class="text-2xl font-bold text-slate-900" id="totalLinksDisplay">0</p>
+                        </div>
+                    </div>
+                    
+                        
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden fade-in-up" style="animation-delay: 0.5s;">
+                    <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
+                        <h3 class="text-lg font-bold text-slate-900">Recent History</h3>
+                    </div>
+                    
+                    <div class="overflow-x-auto overflow-y-auto max-h-[400px] custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/50 text-slate-500 text-xs uppercase tracking-wider font-semibold">
+                                    <th class="px-6 py-4">Original URL</th>
+                                    <th class="px-6 py-4">Short Code</th>
+                                    <th class="px-6 py-4">Created</th>
+                                    <th class="px-6 py-4 text-center">Clicks</th>
+                                    <th class="px-6 py-4 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="linksTableBody" class="divide-y divide-slate-100 text-sm">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                    
+                    <!-- Estado vacío (oculto por defecto, se muestra si no hay links) -->
+                    <div id="emptyState" class="hidden p-12 text-center">
+                        <div class="inline-block p-4 rounded-full bg-slate-50 text-slate-300 mb-4">
+                            <i class="fa-solid fa-link-slash text-3xl"></i>
+                        </div>
+                        <p class="text-slate-500">You have not created any links yet.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="md:flex md:items-center md:justify-between">
+                <div class="flex justify-center md:justify-start space-x-6 md:order-2">
+                    <a href="https://github.com/nicoars1/shortlinks" class="text-slate-400 hover:text-slate-500" target="_blank">
+                        <i class="fa-brands fa-github text-xl"></i>
+                    </a>
+                </div>
+                <div class="mt-8 md:mt-0 md:order-1">
+                    <p class="text-center md:text-left text-base text-slate-400">
+                        &copy; 2025 nicoars1
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification (Popup) -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <div class="bg-slate-900 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-green-400"></i>
+            <span id="toastMessage">Link copied to clipboard</span>
+        </div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
