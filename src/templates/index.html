@@ -1,23 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ShortLink</title>
 
-    <!-- Custom CSS -->
-     <link rel="stylesheet" href="src\static\style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 640 512%22><path fill=%22%230d9488%22 d=%22M579.8 267.7c56.5-56.5 56.5-148 0-204.5c-50-50-128.8-56.5-186.3-15.4l-1.6 1.1c-14.4 10.3-17.7 30.3-7.4 44.6s30.3 17.7 44.6 7.4l1.6-1.1c32.1-22.9 76-19.3 103.8 8.6c31.5 31.5 31.5 82.5 0 114L422.3 334.8c-31.5 31.5-82.5 31.5-114 0c-27.9-27.9-31.5-71.8-8.6-103.8l1.1-1.6c10.3-14.4 6.9-34.4-7.4-44.6s-34.4-6.9-44.6 7.4l-1.1 1.6C206.5 251.2 213 330 263 380c56.5 56.5 148 56.5 204.5 0L579.8 267.7zM60.2 244.3c-56.5 56.5-56.5 148 0 204.5c50 50 128.8 56.5 186.3 15.4l1.6-1.1c14.4-10.3 17.7-30.3 7.4-44.6s-30.3-17.7-44.6-7.4l-1.6 1.1c-32.1 22.9-76 19.3-103.8-8.6C74 372 74 321 105.5 289.5L217.7 177.2c31.5-31.5 82.5-31.5 114 0c27.9 27.9 31.5 71.8 8.6 103.8l-1.1 1.6c-10.3 14.4-6.9 34.4 7.4 44.6s34.4 6.9 44.6-7.4l1.1-1.6C433.5 260.8 427 182 377 132c-56.5-56.5-148-56.5-204.5 0L60.2 244.3z%22/></svg>">
+
+    <link rel="stylesheet" href="/static/style.css">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Tailwind Configuration and Custom Styles -->
     <script>
         tailwind.config = {
             theme: {
@@ -29,7 +26,7 @@
                         brand: {
                             50: '#f0fdfa',
                             100: '#ccfbf1',
-                            500: '#14b8a6', // Teal
+                            500: '#14b8a6',
                             600: '#0d9488',
                             900: '#134e4a',
                         }
@@ -41,7 +38,6 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
 
-    <!-- Navbar -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -54,16 +50,7 @@
                     </div>
                 </div>
                 <div class="hidden md:flex items-center space-x-4">
-                    <!--
-                    <a href="#" class="text-slate-500 hover:text-brand-600 px-3 py-2 text-sm font-medium transition">Stats</a>
-                    <a href="#" class="text-slate-500 hover:text-brand-600 px-3 py-2 text-sm font-medium transition">API</a>
-                    <button class="text-slate-500 hover:text-slate-900 px-3 py-2 text-sm font-medium">Log In</button>
-                    <button class="bg-brand-600 hover:bg-brand-900 text-white px-4 py-2 rounded-lg text-sm font-medium transition shadow-lg shadow-brand-500/30">
-                        Sign up
-                    </button>
-                    -->
                 </div>
-                <!-- Mobile menu button placeholder -->
                 <div class="flex items-center md:hidden">
                     <button class="text-slate-500 hover:text-slate-700">
                         <i class="fa-solid fa-bars text-xl"></i>
@@ -73,10 +60,8 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="flex-grow">
         
-        <!-- Hero Section with Input -->
         <section class="relative bg-white pt-16 pb-20 lg:pt-24 lg:pb-28 overflow-hidden">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
                 <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 fade-in-up" style="animation-delay: 0.1s;">
@@ -87,14 +72,13 @@
                     A powerful tool for marketers. Track clicks, analyze data, and manage your links intelligently.
                 </p>
 
-                <!-- Main Input Box -->
                 <div class="max-w-3xl mx-auto bg-white p-2 rounded-2xl shadow-2xl shadow-brand-900/10 border border-slate-100 fade-in-up" style="animation-delay: 0.3s;">
                     <form id="shortenForm" class="flex flex-col md:flex-row gap-2">
                         <div class="relative flex-grow">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-link text-slate-400"></i>
                             </div>
-                            <input type="url" id="originalUrl" required
+                            <input type="text" id="originalUrl" required
                                 placeholder="Paste your link here (ej: https://link.com/...)" 
                                 class="w-full pl-11 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent text-slate-900 placeholder-slate-400 transition"
                             >
@@ -106,29 +90,32 @@
                     </form>
                 </div>
                 
-                <!-- Hidden error/success message -->
                 <div id="statusMessage" class="mt-4 h-6 text-sm font-medium transition-opacity opacity-0"></div>
             </div>
             
-            <!-- Decorative background elements -->
             <div class="absolute top-0 left-1/2 w-full -translate-x-1/2 h-full z-0 pointer-events-none">
                 <div class="absolute top-20 left-10 w-72 h-72 bg-brand-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
                 <div class="absolute top-20 right-10 w-72 h-72 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
             </div>
         </section>
 
-        <!-- Statistics and List Section  -->
         <section class="bg-slate-50 py-12 border-t border-slate-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 
-                <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 fade-in-up" style="animation-delay: 0.4s;">
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 z-10 relative overflow-visible">
                         <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl">
                             <i class="fa-solid fa-chart-line"></i>
                         </div>
                         <div>
-                            <p class="text-sm text-slate-500 font-medium">Total Clicks</p>
+                            <div class="flex items-center gap-2 relative group cursor-help">
+                                <p class="text-sm text-slate-500 font-medium">Total Clicks</p>
+                                <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block w-64 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-50 text-center leading-relaxed">
+                                    Total number of times shortened links from all users have been clicked globally.
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
                             <p class="text-2xl font-bold text-slate-900" id="totalClicksDisplay">0</p>
                         </div>
                     </div>
@@ -141,12 +128,17 @@
                             <p class="text-2xl font-bold text-slate-900" id="totalLinksDisplay">0</p>
                         </div>
                     </div>
-                    
-                        
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-slate-500 font-medium">Personal Clicks</p>
+                            <p class="text-2xl font-bold text-slate-900" id="personalClicksDisplay">0</p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Results Table -->
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden fade-in-up" style="animation-delay: 0.5s;">
                     <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
                         <h3 class="text-lg font-bold text-slate-900">Recent History</h3>
@@ -167,9 +159,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
                     
-                    <!-- Estado vacío (oculto por defecto, se muestra si no hay links) -->
                     <div id="emptyState" class="hidden p-12 text-center">
                         <div class="inline-block p-4 rounded-full bg-slate-50 text-slate-300 mb-4">
                             <i class="fa-solid fa-link-slash text-3xl"></i>
@@ -182,7 +172,6 @@
         </section>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="md:flex md:items-center md:justify-between">
@@ -200,11 +189,43 @@
         </div>
     </footer>
 
-    <!-- Toast Notification (Popup) -->
     <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
         <div class="bg-slate-900 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
             <i class="fa-solid fa-circle-check text-green-400"></i>
             <span id="toastMessage">Link copied to clipboard</span>
+        </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="customModal" class="fixed inset-0 z-[60] hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            
+            <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div class="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div id="modalIconBg" class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <i id="modalIcon" class="fa-solid fa-triangle-exclamation text-red-600"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Title</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500" id="modalMessage">Message content</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                    <button type="button" id="modalConfirmBtn" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto sm:text-sm">
+                        Confirm
+                    </button>
+                    <button type="button" id="modalCancelBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

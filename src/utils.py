@@ -20,3 +20,12 @@ def check_url_safety(url):
         return False
 
     return True
+
+def normalize_url(url):
+    if validate_url(url):
+        return url
+
+    if validate_url("http://" + url):
+        return "http://" + url
+
+    return False

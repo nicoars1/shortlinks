@@ -1,6 +1,6 @@
 from flask import Blueprint, request, redirect, render_template, jsonify
 from models import db, Links
-from utils import generateCode, check_url_safety
+from utils import generateCode, check_url_safety, validURL, normalize_url
 import validators
 import os
 
@@ -15,13 +15,19 @@ def shortenURL():
     data = request.json
     original = data.get("url")
     user_id = data.get("user_id", "default")
+    normalized = normalize_url(original)
 
+    if not data:
+        return jsonify({"error": "Invalid JSON body"}), 400
+    if not normalized:
+        return jsonify({"error": "URL invalid"}), 400
     if not check_url_safety(original):
         return jsonify({"error": "suspicious URL"}), 400
     if not original:
         return jsonify({"error": "URL required"}), 400
-    if not validators.url(original):
+    if not validURL(original):
         return jsonify({"error": "URL invalid"}), 400
+    
 
     # Verify limit of 5 links per user
     user_links_count = Links.query.filter_by(user_id=user_id).count()
@@ -30,7 +36,7 @@ def shortenURL():
 
     short = generateCode()
 
-    link = Links(original_url=original, short_code=short, user_id=user_id)
+    link = Links(original_url=normalized, short_code=short, user_id=user_id)
     db.session.add(link)
     db.session.commit()
 

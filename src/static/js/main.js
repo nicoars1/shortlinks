@@ -5,7 +5,6 @@ function saveToLocalStorage() {
 let linksData = [];
 const MAX_LINKS = 5;
 
-// Generate a unique ID for each user/browser
 let userId = localStorage.getItem("userId");
 if (!userId) {
     userId = "user_" + Math.random().toString(36).substr(2, 9);
@@ -19,7 +18,60 @@ const totalLinksDisplay = document.getElementById("totalLinksDisplay");
 const totalClicksDisplay = document.getElementById("totalClicksDisplay");
 const submitBtn = document.getElementById("submitBtn");
 
+const modal = document.getElementById("customModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalMessage = document.getElementById("modalMessage");
+const modalConfirmBtn = document.getElementById("modalConfirmBtn");
+const modalCancelBtn = document.getElementById("modalCancelBtn");
+const modalIcon = document.getElementById("modalIcon");
+const modalIconBg = document.getElementById("modalIconBg");
 
+let confirmCallback = null;
+
+function showModal(type, title, message, callback = null) {
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    confirmCallback = callback;
+
+    modal.classList.remove("hidden");
+
+    if (type === 'delete') {
+        modalIconBg.className = "mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10";
+        modalIcon.className = "fa-solid fa-trash-can text-red-600";
+        modalConfirmBtn.textContent = "Delete";
+        modalConfirmBtn.className = "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:w-auto sm:text-sm";
+        modalCancelBtn.classList.remove("hidden");
+    } else if (type === 'security') {
+        modalIconBg.className = "mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10";
+        modalIcon.className = "fa-solid fa-shield-halved text-red-600";
+        modalConfirmBtn.textContent = "Close";
+        modalConfirmBtn.className = "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:w-auto sm:text-sm";
+        modalCancelBtn.classList.add("hidden");
+    } else if (type === 'limit') {
+        modalIconBg.className = "mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-orange-100 sm:mx-0 sm:h-10 sm:w-10";
+        modalIcon.className = "fa-solid fa-hand text-orange-600";
+        modalConfirmBtn.textContent = "Close";
+        modalConfirmBtn.className = "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:w-auto sm:text-sm";
+        modalCancelBtn.classList.add("hidden");
+    } else {
+        modalIconBg.className = "mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10";
+        modalIcon.className = "fa-solid fa-info text-blue-600";
+        modalConfirmBtn.textContent = "Close";
+        modalConfirmBtn.className = "w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-slate-600 text-base font-medium text-white hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 sm:w-auto sm:text-sm";
+        modalCancelBtn.classList.add("hidden");
+    }
+}
+
+function closeModal() {
+    modal.classList.add("hidden");
+    confirmCallback = null;
+}
+
+modalCancelBtn.addEventListener("click", closeModal);
+modalConfirmBtn.addEventListener("click", () => {
+    if (confirmCallback) confirmCallback();
+    closeModal();
+});
 
 function renderTable() {
     tableBody.innerHTML = "";
@@ -29,8 +81,6 @@ function renderTable() {
         totalLinksDisplay.textContent = "0/5";
         return;
     }
-        
-    
 
     document.getElementById("emptyState").classList.add("hidden");
 
@@ -80,7 +130,7 @@ function renderTable() {
                     <i class="fa-regular fa-copy"></i>
                 </button>
 
-                <button onclick="deleteLink(${index})"
+                <button onclick="requestDeleteLink(${index})"
                         class="text-slate-400 hover:text-red-500 transition p-2 rounded-full hover:bg-red-50 ml-1"
                         title="Delete">
                     <i class="fa-regular fa-trash-can"></i>
@@ -90,20 +140,21 @@ function renderTable() {
 
         tableBody.appendChild(row);
     });
-
     totalLinksDisplay.textContent = `${linksData.length}/5`;
 }
 
-// --- Form Submit ---
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const url = input.value.trim();
 
-    if (!url) return alert("Enter a URL");
+    if (!url) {
+        showModal('error', 'Input Required', 'Please enter a valid URL.');
+        return;
+    }
 
-    // Validate limit of 5 links
     if (linksData.length >= MAX_LINKS) {
-        return alert(`You have reached the limit of ${MAX_LINKS} short links. Delete one to create another.`);
+        showModal('limit', 'Limit Reached', `You have reached the limit of ${MAX_LINKS} short links. Please delete one to create a new one.`);
+        return;
     }
 
     try {
@@ -114,7 +165,17 @@ form.addEventListener("submit", async (e) => {
         });
 
         const data = await response.json();
-        if (data.error) return alert("Error: " + data.error);
+        
+        if (data.error) {
+            if (data.error.includes("suspicious")) {
+                showModal('security', 'Security Alert', 'Suspicious URL detected. This link cannot be shortened due to security policies.');
+            } else if (data.error.includes("limit")) {
+                showModal('limit', 'Limit Reached', `You have reached the limit of ${MAX_LINKS} short links. Please delete one to create a new one.`);
+            } else {
+                showModal('error', 'Error', data.error);
+            }
+            return;
+        }
 
         linksData.push({
             original: data.original,
@@ -129,24 +190,37 @@ form.addEventListener("submit", async (e) => {
         input.value = "";
     } catch (err) {
         console.error("Error:", err);
-        alert("Unexpected error.");
+        showModal('error', 'Connection Error', 'An unexpected error occurred. Please try again.');
     }
 });
 
 async function loadStats() {
-    const res = await fetch("/stats/clicks");
-    const data = await res.json();
-    totalClicksDisplay.textContent = data.total_clicks;
+    try {
+        const res = await fetch("/stats/clicks");
+        const data = await res.json();
+        totalClicksDisplay.textContent = data.total_clicks;
+    } catch (e) {
+        console.log("Stats error");
+    }
+}
+
+function updatePersonalClicks() {
+    const total = linksData.reduce((sum, link) => sum + (link.clicks || 0), 0);
+    document.getElementById("personalClicksDisplay").textContent = total;
 }
 
 async function loadLinks() {
-    const res = await fetch(`/stats/links?user_id=${userId}`);
-    const data = await res.json();
+    try {
+        const res = await fetch(`/stats/links?user_id=${userId}`);
+        const data = await res.json();
 
-    linksData = data;
-    saveToLocalStorage(); // Sync local copy
-
-    renderTable();
+        linksData = data;
+        saveToLocalStorage(); 
+        renderTable();
+        updatePersonalClicks();
+    } catch (e) {
+        console.log("Load links error");
+    }
 }
 
 function copyToClipboard(text) {
@@ -166,12 +240,17 @@ function showToast(message) {
     }, 3000);
 }
 
-async function deleteLink(index) {
+function requestDeleteLink(index) {
+    showModal('delete', 'Delete Link', 'Are you sure you want to delete this link? This action cannot be undone.', () => {
+        performDeleteLink(index);
+    });
+}
+
+async function performDeleteLink(index) {
     const link = linksData[index];
     const shortCode = link.short || link.short_code;
 
     if (!shortCode) return;
-    if (!confirm("Are you sure you want to delete this link?")) return;
 
     try {
         const res = await fetch(`/delete/${shortCode}`, {
@@ -179,20 +258,23 @@ async function deleteLink(index) {
         });
 
         const data = await res.json();
-        if (data.error) return alert("Error: " + data.error);
+        if (data.error) {
+            showModal('error', 'Error', data.error);
+            return;
+        }
 
         linksData.splice(index, 1);
         saveToLocalStorage();
 
         renderTable();
         loadStats();
+        updatePersonalClicks();
         showToast("Link deleted successfully");
     } catch (err) {
         console.error("Delete error:", err);
-        alert("Error trying to delete.");
+        showModal('error', 'Error', 'Could not delete the link.');
     }
 }
 
-// --- Initial Load ---
 loadLinks();
 loadStats();
