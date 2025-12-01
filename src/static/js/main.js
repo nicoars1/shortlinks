@@ -74,7 +74,7 @@ function renderTable() {
             </td>
 
             <td class="px-6 py-4 text-right">
-                <button onclick="copyToClipboard('http://127.0.0.1:4000/${shortCode}')" 
+                <button onclick="copyToClipboard('https://shortlinks-production-86ed.up.railway.app/${shortCode}')" 
                         class="text-slate-400 hover:text-brand-600 transition p-2 rounded-full hover:bg-brand-50"
                         title="Copy">
                     <i class="fa-regular fa-copy"></i>

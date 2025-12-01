@@ -2,6 +2,7 @@ from flask import Blueprint, request, redirect, render_template, jsonify
 from models import db, Links
 from utils import generateCode, check_url_safety
 import validators
+import os
 
 bp = Blueprint("main", __name__)
 
@@ -35,9 +36,13 @@ def shortenURL():
 
     total_clicks = db.session.query(db.func.sum(Links.clicks)).scalar() or 0
 
+    BASE_URL = os.getenv("BASE_URL", "https://shortlinks-production-86ed.up.railway.app")
+    full_short_url = f"{BASE_URL}/{link.short_code}"
+
     return jsonify({
         "original": link.original_url,
         "short": link.short_code,
+        "short_url": full_short_url, 
         "created_at": link.created_at.strftime("%Y-%m-%d %H:%M:%S"),
         "clicks": link.clicks,
         "total_clicks": total_clicks
